@@ -15,6 +15,11 @@ const config: Config = {
       },
     },
   },
+  variants: {
+    extend: {
+      objectFit: ['cover'],
+    },
+  },
   plugins: [],
 };
 export default config;
