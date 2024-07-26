@@ -40,19 +40,19 @@ const Mainnavbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-lg">
+    <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between h-24"> {/* Increased height */}
+        <div className="flex justify-between h-24">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-3xl font-bold text-green-600"> {/* Increased font size */}
-                <img src="images/logo-no-background.png" className='h-20' alt="Addicare" /> {/* Increased logo size */}
+              <Link href="/" className="text-3xl font-bold text-green-600">
+                <img src="images/logo-no-background.png" className='h-20' alt="Addicare" />
               </Link>
             </div>
-            <div className="hidden lg:ml-10 lg:flex lg:space-x-12"> {/* Increased spacing */}
+            <div className="hidden lg:ml-10 lg:flex lg:space-x-12">
               {status === "authenticated" && (
                 <>
-                  <Link href="/userplans" className="text-gray-600 hover:text-gray-900 inline-flex items-center px-1 pt-1 text-lg font-medium"> {/* Increased font size */}
+                  <Link href="/userplans" className="text-gray-600 hover:text-gray-900 inline-flex items-center px-1 pt-1 text-lg font-medium">
                     Start
                   </Link>
                   <Link href="/mood" className="text-gray-600 hover:text-gray-900 inline-flex items-center px-1 pt-1 text-lg font-medium">
@@ -69,7 +69,7 @@ const Mainnavbar = () => {
             {status === "authenticated" && (
               <>
                 <UserScoreDisplay />
-                <div className="ml-6 relative"> {/* Increased margin */}
+                <div className="ml-6 relative">
                   <div>
                     <button
                       onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -86,10 +86,10 @@ const Mainnavbar = () => {
                     </button>
                   </div>
                   {isMenuOpen && (
-                    <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5"> {/* Increased width */}
+                    <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5">
                       <button
                         onClick={handleLogout}
-                        className="block px-4 py-3 text-base text-gray-700 hover:bg-gray-100 w-full text-left" 
+                        className="block px-4 py-3 text-base text-gray-700 hover:bg-gray-100 w-full text-left"
                       >
                         Logout
                       </button>
@@ -103,10 +103,10 @@ const Mainnavbar = () => {
             )}
             {status === "unauthenticated" && (
               <>
-                <Link href="/authentication/login" className="text-gray-600 hover:text-gray-900 inline-flex items-center px-4 py-2 text-lg font-medium"> {/* Increased padding and font size */}
+                <Link href="/authentication/login" className="text-gray-600 hover:text-gray-900 inline-flex items-center px-4 py-2 text-lg font-medium">
                   Login
                 </Link>
-                <Link href="/authentication/signup" className="ml-8 inline-flex items-center px-6 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-green-600 hover:bg-green-700"> {/* Increased padding and font size */}
+                <Link href="/authentication/signup" className="ml-8 inline-flex items-center px-6 py-3 border border-transparent text-lg font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
                   Sign up
                 </Link>
               </>
@@ -118,7 +118,7 @@ const Mainnavbar = () => {
               className="inline-flex items-center justify-center p-3 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-green-500"
             >
               <span className="sr-only">Open main menu</span>
-              <svg className="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> {/* Increased size */}
+              <svg className="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>

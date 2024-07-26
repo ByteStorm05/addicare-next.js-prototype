@@ -1,13 +1,11 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from "next-auth/react";
 import { db } from '../../firebaseconfig'; // Adjust the import path as needed
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import { Typography, Card, CardContent, Button, Box, CircularProgress, List, ListItem, ListItemText } from '@mui/material';
-import { PlusCircle, FileText } from 'lucide-react';
 import Navbar from "../components/Mainnavnar";
-import  Prompt  from '../prompt/page';
+import Prompt from '../prompt/page';
 
 const lightGreen = '#e8f5e9';
 const mediumGreen = '#66bb6a';
@@ -55,9 +53,9 @@ export default function UserPlansPage() {
 
   if (loading) {
     return (
-      <Box className="flex justify-center items-center h-screen bg-gray-100">
-        <CircularProgress size={64} thickness={4} style={{ color: darkGreen }} />
-      </Box>
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="w-16 h-16 border-4 border-t-transparent border-blue-500 border-solid rounded-full animate-spin"></div>
+      </div>
     );
   }
 
@@ -66,57 +64,64 @@ export default function UserPlansPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <section className="bg-gray-50 min-h-screen">
       <Navbar />
-      <main className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
-        <Card sx={{ backgroundColor: lightGreen, mb: 4 }}>
-          <CardContent>
-            <Typography variant="h4" style={{ color: darkGreen }} gutterBottom>
-              Your Plans
-            </Typography>
-            {plans.length === 0 ? (
-              <Typography variant="body1" style={{ color: darkGreen }}>
-                You haven't created any plans yet. Click the button below to create your first plan!
-              </Typography>
-            ) : (
-              <List>
-                {plans.map((plan) => (
-                  <ListItem
-                    key={plan.id}
-                    button
-                    onClick={() => handlePlanClick(plan.id)}
-                    sx={{
-                      mb: 2,
-                      backgroundColor: 'white',
-                      borderRadius: '8px',
-                      '&:hover': { backgroundColor: '#f0f0f0' }
-                    }}
-                  >
-                    <FileText style={{ color: mediumGreen, marginRight: '16px' }} />
-                    <ListItemText
-                      primary={`Plan created on ${new Date(plan.createdAt.toDate()).toLocaleDateString()}`}
-                      secondary={`Challenges: ${plan.formData.addictions}`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </CardContent>
-        </Card>
-        <Button
-          variant="contained"
-          startIcon={<PlusCircle />}
-          onClick={handleCreatePlan}
-          fullWidth
-          sx={{
-            backgroundColor: mediumGreen,
-            '&:hover': { backgroundColor: darkGreen },
-            py: 2
-          }}
-        >
-          Create New Plan
-        </Button>
-      </main>
-    </div>
+      <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
+          {/* Text and Button Section */}
+          <div className="lg:pr-8">
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">Your Plans</h2>
+            <p className="text-gray-500 mb-6">
+              {plans.length === 0
+                ? "You haven't created any plans yet. Click the button below to create your first plan!"
+                : "Here are your plans. Click on any plan to view or edit it."}
+            </p>
+            <button
+              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition"
+              onClick={handleCreatePlan}
+            >
+              Create New Plan
+            </button>
+          </div>
+
+          {/* Image Section */}
+          <div className="mt-8 lg:mt-0">
+            <img
+              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/cta/cta-dashboard-mockup.svg"
+              alt="Dashboard Mockup"
+              className="w-full h-auto rounded-lg shadow-md"
+            />
+          </div>
+        </div>
+
+        {/* Plans List */}
+        {plans.length > 0 && (
+          <div className="mt-8 space-y-4">
+            {plans.map((plan) => (
+              <div
+                key={plan.id}
+                className="bg-white p-4 rounded-lg shadow-md hover:bg-gray-100 cursor-pointer transition"
+                onClick={() => handlePlanClick(plan.id)}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-green-100 text-green-500 flex items-center justify-center rounded-full">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Plan created on {new Date(plan.createdAt.toDate()).toLocaleDateString()}
+                    </h3>
+                    <p className="text-gray-600">Challenges: {plan.formData.addictions}</p>
+                  </div>
+                  <div className="text-green-500 font-medium">Click to Access</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

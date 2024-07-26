@@ -5,10 +5,9 @@ import { getSession } from "next-auth/react";
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from "../../firebaseconfig"; 
 import { useSession } from "next-auth/react";
-import {useRouter} from 'next/navigation';
-import Navbar from "../components/Mainnavnar"
+import { useRouter } from 'next/navigation';
+import Navbar from "../components/Mainnavnar";
 import { Card, CardContent, Typography, Button, Slider } from '@mui/material';
-
 
 const moodEmojis = [
   { emoji: '😊', name: 'Happy', icon: EmojiHappyIcon, color: 'bg-yellow-400' },
@@ -27,19 +26,19 @@ export default function MoodTracker() {
   const [moodHistory, setMoodHistory] = useState([]);
   const [streak, setStreak] = useState(0);
   const [libertyScore, setLibertyScore] = useState(0);
-  const { data:session ,status } = useSession();
-  const router = useRouter()
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     console.log("Session status:", status);
     console.log("Session data:", session);
     if (status === "authenticated") {
       console.log("gimme");
-     
     } else if (status === "unauthenticated") {
       router.push("/authentication/login");
     }
   }, [status, router]);
+
   useEffect(() => {
     const storedHistory = localStorage.getItem('moodHistory');
     if (storedHistory) {
@@ -130,12 +129,11 @@ export default function MoodTracker() {
     try {
       const session = await getSession();
       if (session && session.user) {
-          await updateUserStreak(session.user.id);}
-        else{
-          console.log("session error")
-        }
+        await updateUserStreak(session.user.id);
+      } else {
+        console.log("session error");
+      }
       
-
       const moodTrend = getMoodTrend(updatedHistory);
       
       const suggestionPrompt = `Based on a person feeling ${selectedMood.name.toLowerCase()} with an intensity of ${moodIntensity} out of 10, provide a short suggestion to improve or maintain their mood. Consider the trend in their mood over time: ${moodTrend}`;
@@ -196,101 +194,103 @@ export default function MoodTracker() {
           {/* Left Sidebar */}
           <div className="hidden lg:block lg:col-span-3 xl:col-span-2">
             <nav aria-label="Sidebar" className="sticky top-4 divide-y divide-gray-300">
-              <Card sx={{ mb: 2 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>Affirmation</Typography>
-                  <Typography variant="body2">{affirmation || "Log your mood to get an affirmation"}</Typography>
+              <Card className="mb-2 rounded-lg shadow-md border border-gray-200">
+                <CardContent className="flex items-center justify-center p-4">
+                  <Typography variant="h6" className="font-semibold">Mood Tracker</Typography>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>Suggestion</Typography>
-                  <Typography variant="body2">{suggestion || "Log your mood to get a suggestion"}</Typography>
-                </CardContent>
-              </Card>
+              {/* Repeat similar card for other sections or moods */}
             </nav>
           </div>
 
-          {/* Main content area */}
-          <main className="lg:col-span-6 xl:col-span-7">
-            <Card>
-              <CardContent>
-                <Typography variant="h4" gutterBottom>Mood Tracker</Typography>
-                <div className="mb-6 flex justify-between items-center">
-                  <Typography variant="subtitle1" color="primary">Streak: {streak} days</Typography>
-                  <Typography variant="subtitle1" color="secondary">Liberty Score: {libertyScore}</Typography>
+          {/* Main Content */}
+          <div className="lg:col-span-9 xl:col-span-10">
+            <section aria-labelledby="mood-tracker-heading">
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div className="px-4 py-5 sm:px-6">
+                  <h2 id="mood-tracker-heading" className="text-lg font-medium text-gray-900">Track Your Mood</h2>
                 </div>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <Typography variant="h6" gutterBottom>How are you feeling?</Typography>
-                    <div className="flex justify-center space-x-4">
-                      {moodEmojis.map((mood) => (
-                        <Button
-                          key={mood.name}
-                          onClick={() => handleMoodSelect(mood)}
-                          variant={selectedMood?.name === mood.name ? "contained" : "outlined"}
-                          style={{ minWidth: '60px', height: '60px' }}
-                        >
-                          {mood.emoji}
-                        </Button>
-                      ))}
+                <div className="border-t border-gray-200">
+                  <dl>
+                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt className="text-sm font-medium text-gray-500">Select Mood</dt>
+                      <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                          {moodEmojis.map((mood) => (
+                            <Card
+                              key={mood.name}
+                              className={`cursor-pointer ${selectedMood?.name === mood.name ? 'bg-blue-100' : 'bg-white'} rounded-lg shadow-md border border-gray-200`}
+                              onClick={() => handleMoodSelect(mood)}
+                            >
+                              <CardContent className="flex flex-col items-center justify-center p-4">
+                                <div className={`w-16 h-16 ${mood.color} rounded-full flex items-center justify-center`}>
+                                  <mood.icon className="h-12 w-12 text-white" />
+                                </div>
+                                <Typography className="mt-2 text-center text-lg font-semibold">{mood.emoji}</Typography>
+                                <Typography className="mt-1 text-center text-sm text-gray-600">{mood.name}</Typography>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </dd>
                     </div>
-                  </div>
-                  
-                  {selectedMood && (
-                    <div className="mt-6">
-                      <Typography variant="h6" gutterBottom>
-                        How strongly do you feel {selectedMood.name.toLowerCase()}?
-                      </Typography>
-                      <Slider
-                        value={moodIntensity}
-                        onChange={handleIntensityChange}
-                        aria-labelledby="mood-intensity-slider"
-                        valueLabelDisplay="auto"
-                        step={1}
-                        marks
-                        min={1}
-                        max={10}
-                      />
-                      <Typography variant="body1" align="center">{moodIntensity}/10</Typography>
-                    </div>
-                  )}
-                  
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    disabled={!selectedMood}
-                  >
-                    Log Mood
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </main>
 
-          {/* Right column */}
-          <aside className="hidden xl:block xl:col-span-3">
-            <div className="sticky top-4 space-y-4">
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>Mood History</Typography>
-                  {moodHistory.slice(-5).reverse().map((entry, index) => (
-                    <div key={index} className="flex items-center space-x-2 mb-2">
-                      <span className="text-2xl">{entry.mood.emoji}</span>
-                      <Typography variant="body2">
-                        {entry.mood.name} ({entry.intensity}/10)
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {new Date(entry.timestamp).toLocaleString()}
-                      </Typography>
+                    {selectedMood && (
+                      <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">Mood Intensity</dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                          <Slider
+                            value={moodIntensity}
+                            min={1}
+                            max={10}
+                            onChange={handleIntensityChange}
+                            aria-labelledby="mood-intensity-slider"
+                          />
+                          <Typography className="text-sm text-gray-700">Intensity: {moodIntensity}</Typography>
+                        </dd>
+                      </div>
+                    )}
+
+                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt className="text-sm font-medium text-gray-500">Suggestions</dt>
+                      <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                        <Typography>{suggestion || "No suggestions yet"}</Typography>
+                      </dd>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-          </aside>
+                    
+                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt className="text-sm font-medium text-gray-500">Affirmation</dt>
+                      <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                        <Typography>{affirmation || "No affirmation yet"}</Typography>
+                      </dd>
+                    </div>
+
+                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                      <dt className="text-sm font-medium text-gray-500">Your Mood History</dt>
+                      <dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                        <div>
+                          {moodHistory.map((entry, index) => (
+                            <div key={index} className="flex items-center justify-between border-b py-2">
+                              <div className="flex items-center">
+                                <Typography className="text-sm font-medium">{entry.mood.emoji} {entry.mood.name} - {entry.intensity}/10</Typography>
+                              </div>
+                              <Typography className="text-sm text-gray-500">{new Date(entry.timestamp).toLocaleDateString()}</Typography>
+                            </div>
+                          ))}
+                        </div>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </div>
+            </section>
+
+            <form onSubmit={handleSubmit} className="mt-6">
+              <Button type="submit" variant="contained" color="primary" className="w-full">
+                Submit Mood
+              </Button>
+            </form>
+          </div>
         </div>
       </main>
     </div>
